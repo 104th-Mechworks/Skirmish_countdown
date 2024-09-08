@@ -1,58 +1,125 @@
-// Function to get the current time in CET (Central European Time)
-function getCETTime() {
+// Function to get the start of the upcoming Friday at 00:00 CET
+function getNextFriday() {
   const now = new Date();
-  const utcOffset = now.getTimezoneOffset() * 60000; // UTC offset in milliseconds
-  const cetOffset = 1 * 60 * 60000; // CET offset from UTC (+1 hour)
+  const daysUntilFriday = (5 - now.getDay() + 7) % 7;
+  const nextFriday = new Date(now);
+  nextFriday.setDate(now.getDate() + daysUntilFriday);
+  nextFriday.setHours(0, 0, 0, 0); // 00:00 CET
 
-  return new Date(now.getTime() + utcOffset + cetOffset);
+  // Convert to CET (UTC+1 or UTC+2)
+  const cetOffset = now.getTimezoneOffset() / 60; // Offset in hours from UTC
+  nextFriday.setHours(nextFriday.getHours() + 1 - cetOffset); // Adjust to CET
+
+  return nextFriday.getTime();
 }
 
-// Set the initial countdown date to the next 3-minute interval
-let countdownTarget = Math.ceil(getCETTime().getTime() / 180000) * 180000; // 180000 = 3 minutes in milliseconds
+// Function to get the start of Saturday at 05:00 CET
+function getSaturdayStart() {
+  const now = new Date();
+  const daysUntilSaturday = (6 - now.getDay() + 7) % 7;
+  const nextSaturday = new Date(now);
+  nextSaturday.setDate(now.getDate() + daysUntilSaturday);
+  nextSaturday.setHours(5, 0, 0, 0); // 05:00 CET
 
-const daysElement = document.getElementById('days');
-const hoursElement = document.getElementById('hours');
-const minutesElement = document.getElementById('minutes');
-const secondsElement = document.getElementById('seconds');
-const countdownContainer = document.querySelector('.countdown');
+  // Convert to CET (UTC+1 or UTC+2)
+  const cetOffset = now.getTimezoneOffset() / 60; // Offset in hours from UTC
+  nextSaturday.setHours(nextSaturday.getHours() + 1 - cetOffset); // Adjust to CET
+
+  return nextSaturday.getTime();
+}
+
+// Function to get the end time for "Skirmish Ending Soon" on Saturday at 06:00 CET
+function getSaturdayEnd() {
+  const now = new Date();
+  const daysUntilSaturday = (6 - now.getDay() + 7) % 7;
+  const nextSaturday = new Date(now);
+  nextSaturday.setDate(now.getDate() + daysUntilSaturday);
+  nextSaturday.setHours(6, 0, 0, 0); // 06:00 CET
+
+  // Convert to CET (UTC+1 or UTC+2)
+  const cetOffset = now.getTimezoneOffset() / 60; // Offset in hours from UTC
+  nextSaturday.setHours(nextSaturday.getHours() + 1 - cetOffset); // Adjust to CET
+
+  return nextSaturday.getTime();
+}
+
+// Set the initial countdown date
+let countdownDate = getNextFriday();
+
+// Get the countdown container
+const countdownElement = document.querySelector('.countdown');
 
 // Update the countdown every second
-setInterval(updateCountdown, 1000);
+const interval = setInterval(function() {
+  const now = new Date().getTime(); // Current time in milliseconds
+  const distance = countdownDate - now; // Time difference
+  const saturdayStart = getSaturdayStart();
+  const saturdayEnd = getSaturdayEnd();
 
-function updateCountdown() {
-  const nowCET = getCETTime();
-  const timeRemaining = countdownTarget - nowCET.getTime();
+  // Display the countdown if current time is before the countdown date
+  if (now >= countdownDate && now < saturdayStart) {
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-  // Calculate the remaining time in seconds
-  const seconds = Math.floor(timeRemaining / 1000);
-
-  // Update the countdown display if there's time remaining
-  if (seconds >= 0) {
-    const minutes = Math.floor(seconds / 60) -1;
-    const secondsDisplay = seconds % 60;
-
-    minutesElement.innerHTML = minutes;
-    secondsElement.innerHTML = secondsDisplay;
-  }
-
-  // Logic to change the text at specific times based on the 3-minute loop
-  if (seconds >= 60) { // 1 minute countdown
-    countdownContainer.classList.remove('countdown-green', 'countdown-red');
-    countdownContainer.innerHTML = `
-      <div class='countdown-item'><span id='minutes'>${minutes}</span><div class='label'>Minutes</div></div>
-      <div class='countdown-item'><span id='seconds'>${secondsDisplay}</span><div class='label'>Seconds</div></div>
+    countdownElement.innerHTML = `
+      <div class="countdown-item">
+        ${days}<span class="label">Days</span>
+      </div>
+      <div class="countdown-item">
+        ${hours}<span class="label">Hours</span>
+      </div>
+      <div class="countdown-item">
+        ${minutes}<span class="label">Minutes</span>
+      </div>
+      <div class="countdown-item">
+        ${seconds}<span class="label">Seconds</span>
+      </div>
     `;
-  } else if (seconds >= 0 && seconds < 60) { // 1 minute Skirmish Live
-    countdownContainer.classList.add('countdown-green');
-    countdownContainer.innerHTML = "<h1>Skirmish Live</h1>";
-  } else if (seconds < 0 && seconds > -60) { // 1 minute Ending Soon
-    countdownContainer.classList.remove('countdown-green');
-    countdownContainer.classList.add('countdown-red');
-    countdownContainer.innerHTML = "<h1>Ending Soon</h1>";
-  }
+    countdownElement.className = ""; // Reset class
 
-  // Check if the 3-minute loop has ended and update the target date
-  if (timeRemaining <= 0) {
-    countdownTarget = Math.ceil(getCETTime().getTime() / 180000) * 180000; // 180000 = 3 minutes in milliseconds
+  // Display "Skirmish Live" if the countdown has ended and it is before the Saturday end time
+  } else if (now >= countdownDate && now >= saturdayStart && now < saturdayEnd) {
+    countdownElement.className = "countdown-green"; // Apply green gradient class
+    countdownElement.innerHTML = "Skirmish Live";
+
+  // Display "Skirmish Ending Soon" if it is between Saturday 05:00 and 06:00 CET
+  } else if (now >= saturdayStart && now < saturdayEnd) {
+    countdownElement.className = "countdown-red"; // Apply red gradient class
+    countdownElement.innerHTML = "Skirmish Ending Soon";
+
+  // Reset to the next Friday if the current time is past the Saturday end time
+  } else if (now >= saturdayEnd) {
+    countdownDate = getNextFriday(); // Reset to next Friday
+    countdownElement.className = ""; // Reset class
+    countdownElement.innerHTML = "Countdown to next Friday";
+
+    // Reset the interval for the new countdown
+    clearInterval(interval);
+    interval = setInterval(function() {
+      const now = new Date().getTime(); // Current time in milliseconds
+      const distance = countdownDate - now; // Time difference
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Display the countdown for the new Friday
+      countdownElement.innerHTML = `
+        <div class="countdown-item">
+          ${days}<span class="label">Days</span>
+        </div>
+        <div class="countdown-item">
+          ${hours}<span class="label">Hours</span>
+        </div>
+        <div class="countdown-item">
+          ${minutes}<span class="label">Minutes</span>
+        </div>
+        <div class="countdown-item">
+          ${seconds}<span class="label">Seconds</span>
+        </div>
+      `;
+    }, 1000);
   }
-}
+}, 1000);
