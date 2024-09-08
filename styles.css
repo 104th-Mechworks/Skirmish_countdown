@@ -1,0 +1,253 @@
+/* styles.css */
+:root {
+    --red: rgb(162, 31, 31);
+    --red2: rgb(183, 58, 58);
+    --red3: rgb(224, 96, 96);
+    --green: rgb(31, 162, 31);
+    --green2: rgb(58, 183, 58);
+    --green3: rgb(96, 224, 96);
+  }
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: black;
+    color: white;
+  }
+  
+  .countdown-container {
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 4vw; /* Scales the heading size based on the viewport width */
+    margin-bottom: 20px;
+  }
+  
+  .countdown {
+    display: flex;
+    justify-content: space-around;
+    gap: 2vw;
+    width: 90vw; /* Ensures the countdown container adjusts for any screen size */
+    max-width: 1200px; /* Keeps the width from getting too large on big screens */
+  }
+  
+  .countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 5vw; /* Relative font size based on the screen width */
+  }
+  
+  .label {
+    font-size: 2vw;
+    margin-top: 5px;
+  }
+  
+  /* Small screens (tablets, phones) */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 6vw; /* Increase heading size for smaller screens */
+    }
+  
+    .countdown-item {
+      font-size: 7vw; /* Larger countdown numbers for small screens */
+    }
+  
+    .label {
+      font-size: 3vw; /* Adjust the label size */
+    }
+  }
+  
+  /* Extra small screens (phones) */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 8vw;
+    }
+  
+    .countdown-item {
+      font-size: 10vw; /* Bigger numbers on very small screens */
+    }
+  
+    .label {
+      font-size: 4vw;
+    }
+  
+    .countdown {
+      gap: 4vw; /* Increase spacing between countdown items on small screens */
+    }
+  }
+  
+  .card {
+    width: auto; /* Scale card width to fit screen size */
+    /* max-width: 640px; /* Max width for larger screens */
+    position: relative;
+    background-color: rgb(16 16 16);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem;
+    padding: 1rem;
+    overflow: hidden;
+    height: auto; /* Allow height to adjust based on content */
+    /* min-height: 400px; /* Set a minimum height for better appearance */
+  }
+  
+  .card:after {  
+    content: "";
+    height: 10%;
+    width: 1px;  
+    position: absolute;  
+    left: -1px;
+    top: 65%;
+    transition: top, opacity;
+    transition-duration: 600ms;
+    transition-timing-function: ease;
+    background: linear-gradient(
+      transparent,
+      var(--primary-color),
+      transparent
+    );
+    opacity: 0;
+  }
+  
+  .card:hover:after {
+    top: 25%;
+    opacity: 1;
+  }
+  
+  .card-content {  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.1) 1px, 
+      transparent 1px
+    );
+    background-position: 50% 50%;
+    background-size: 1.1rem 1.1rem;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    height: 100%; /* Ensure it scales with the card height */
+  }
+  
+  .card-content > :is(h1, h3, p) {
+    text-align: center;
+  }
+  
+  .card-content > h1 {
+    color: rgb(250 249 246); 
+    font-size: 2.6rem;
+  }
+  
+  .card-content > h3 {
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-size: 0.76rem;
+  }
+  
+  .card-content > p {
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.5rem;
+  }
+  
+  @media(max-width: 700px) {
+    .card {
+      width: calc(100% - 2rem);
+      margin: 0rem 1rem;
+      padding: 0.75rem;
+      border-radius: 1rem;
+    }
+  }
+  
+  @media(max-width: 600px) {
+    .card-content {
+      padding: 1.5rem;
+    }
+    
+    .card-content > h1 {
+      font-size: 2.2rem;
+    }
+  }
+
+  /* styles.css */
+
+/* styles.css */
+
+/* styles.css */
+
+@keyframes background-pan {
+    from {
+      background-position: 0% center;
+    }
+    
+    to {
+      background-position: -200% center;
+    }
+  }
+
+  .countdown-red {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: relative; /* Make it a reference for absolute positioning */
+  }
+  
+.countdown-red {
+    animation: background-pan 3s linear infinite;
+    font-size: 4vw;
+    text-align: center;
+    background: linear-gradient(
+    to right,
+    var(--red),
+    var(--red2),
+    var(--red3),
+    var(--red)
+  );
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+
+  }
+
+
+
+  .countdown-green {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: relative; /* Make it a reference for absolute positioning */
+  }
+  
+.countdown-green {
+    animation: background-pan 3s linear infinite;
+    font-size: 4vw;
+    text-align: center;
+    background: linear-gradient(
+    to right,
+    var(--green),
+    var(--green2),
+    var(--green3),
+    var(--green)
+  );
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+
+  }

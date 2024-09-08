@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2-Hour Countdown</title>
+    <style>
+        /* Center the timer on the page */
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+            color: #61dafb;
+        }
+        #countdown {
+            font-size: 48px;
+            color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="color: darkred;">2-Hour Countdown</h2>
+    <div id="countdown"></div>
+
+    <script>
+        // Set the countdown time to 12:00 09/01/2024
+        const countdownTime = new Date("Sep 1, 2024 12:00:00").getTime();
+
+        // Update the countdown every second
+        const countdownInterval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countdownTime - now;
+
+            // Time calculations for hours, minutes, and seconds
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result in the element with id="countdown"
+            document.getElementById("countdown").innerHTML = hours + "h " 
+            + minutes + "m " + seconds + "s ";
+
+            // If the countdown is finished, display "EXPIRED"
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown").innerHTML = "EXPIRED";
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>
+
+
+
+
